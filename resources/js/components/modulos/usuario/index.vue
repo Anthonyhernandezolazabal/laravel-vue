@@ -102,54 +102,68 @@
                 </div>
 
                 <div class="card-body table-responsive">
-                    <table class="table table-hover table-head-fixed text-nowrap projects">
-                        <thead>
-                            <tr>
-                                <th>Foto</th>
-                                <th>Nombre</th>
-                                <th>Correo</th>
-                                <th>Usuarioo</th>
-                                <th>Estado</th>
-                                <th>Accioness</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <img src="" alt="">
-                                </td>
-                                <td>Anthony</td>
-                                <td>correeo@dominio.com</td>
-                                <td>anthony23</td>
-                                <td>
-                                    <span class="badge badge-success">Activo</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" type="button"><i class="fas fa-folder"></i> Ver</button>
-                                    <button class="btn btn-info btn-sm" type="button"><i class="fas fa-pencil-alt"></i> Editar</button>
-                                    <button class="btn btn-success btn-sm" type="button"><i class="fas fa-key"></i> Permmiso</button>
-                                    <button class="btn btn-danger btn-sm" type="button"><i class="fas fa-trash"></i> Desactivar</button>
-                                    <button class="btn btn-success btn-sm" type="button"><i class="fas fa-check"></i> Activar</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <template v-if="listarUsuariosPaginated.length">
+                        <table class="table table-hover table-head-fixed text-nowrap projects">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Usuarioo</th>
+                                    <th>Estado</th>
+                                    <th>Accioness</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in listarUsuariosPaginated" :key="index">
+                                    <td>
+                                        <li class="user-block">
+                                            <img src="/img/avatar.png" :alt="item.username" class="profile-avatar-img img-fluid img-circle">
+                                        </li>
+                                    </td>
+                                    <td v-text="item.fullname">Anthony</td>
+                                    <td v-text="item.email">Anthony</td>
+                                    <td v-text="item.username">Anthony</td>
+                                    <td>
+                                        <template v-if="item.state == 'A'">
+                                            <span class="badge badge-success">Activo</span>
+                                        </template>
+                                        <template v-if="item.state == 'I'">
+                                            <span class="badge badge-danger">Inactivo</span>
+                                        </template>
+                                    </td>
+                                    <td>
+                                        <router-link  class="btn btn-primary btn-sm" type="button" :to="'/'"><i class="fas fa-folder"></i> Ver</router-link>
+                                        <button class="btn btn-info btn-sm" type="button"><i class="fas fa-pencil-alt"></i> Editar</button>
+                                        <button class="btn btn-success btn-sm" type="button"><i class="fas fa-key"></i> Permmiso</button>
+                                        <button class="btn btn-danger btn-sm" type="button"><i class="fas fa-trash"></i> Desactivar</button>
+                                        <button class="btn btn-success btn-sm" type="button"><i class="fas fa-check"></i> Activar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="card-footer clearfix">
+                            <ul class="pagination pagination-sm m-0 float-right">
 
-                    <div class="card-footer clearfix">
-                        <ul class="pagination pagination-sm m-0 float-right">
+                                <li  class="page-item" v-if="pageNumber > 0">
+                                    <a href="#" class="page-link" @click.prevent="prevPage">Ant</a>
+                                </li>
+                                <li  class="page-item" v-for="(page, index) in pagesList" :key="index" :class="[page == pageNumber ? 'active' : '']">
+                                    <a href="#" class="page-link" @click.prevent="selectPage(page)"> {{page+1}} </a>
+                                </li>
+                                <li class="page-item" v-if="pageNumber < pageCount - 1">
+                                    <a href="#" class="page-link" @click.prevent="nextPage">Post</a>
+                                </li>
 
-                            <li  class="page-item">
-                                <a href="#" class="page-link">Ant</a>
-                            </li>
-                            <li  class="page-item activec">
-                                <a href="#" class="page-link">1</a>
-                            </li>
-                            <li class="page-item">
-                                <a href="#" class="page-link">Post</a>
-                            </li>
+                            </ul>
+                        </div>
+                    </template>
 
-                        </ul>
-                    </div>
+                    <template>
+                        <div class="callout callout-info">
+                            <h5>No se encontraron resultados...</h5>
+                        </div>
+                    </template>
                 </div>
 
             </div>
@@ -174,12 +188,44 @@ import axios from 'axios';
                     cCorreo: "",
                     cEstado: "",
                 },
-                listaUsuarios: [], //Resultado de la busqueda de los usuarios
+                listUsuarios: [], //Resultado de la busqueda de los usuarios
                 listEstados: [ //Filtros por estado
                     {value: "A", label: "Activo"},
                     {value: "I", label: "Inactivo"}
-                ]
+                ],
+                pageNumber: 0, //Número de la página paginada
+                perPage: 5, //Número de registros a mostrar por paginación
             }
+        },
+        computed: {
+            // Obtener el número de página
+            pageCount(){
+                let a = this.listUsuarios.length,// 20
+                    b = this.perPage;//5
+                return Math.ceil(a / b);// 20/5 = 4
+            },
+            // Obtener registros paginados
+            listarUsuariosPaginated(){
+                //inicio:            0       *       5       = 0
+                //fin: 0 + 5
+                //0 - (5-1)
+                let inicio = this.pageNumber * this.perPage,
+                    fin = inicio + this.perPage;
+                return this.listUsuarios.slice(inicio,fin);
+            },
+            pagesList(){
+                let a = this.listUsuarios.length,
+                    b = this.perPage;
+                let pageCount = Math.ceil(a / b);
+                let count = 0,
+                    pagesArray = [];
+                while (count < pageCount) {
+                    pagesArray.push(count);
+                    count++;
+                }
+                return pagesArray;
+            }
+
         },
         methods: {
             limpiarCriteriosBsq(){
@@ -189,7 +235,7 @@ import axios from 'axios';
                 this.fillBsqUsuario.cEstado     = "";
             },
             limpiarBandejaUsuarios(){
-                this.listaUsuarios  = [];
+                this.listUsuarios  = [];
             },
             getListaUsuarios(){
                 var url = "/administracion/usuarios/getListaUsuarios"
@@ -201,8 +247,19 @@ import axios from 'axios';
                         "cEstado"   :   this.fillBsqUsuario.cEstado,
                     }
                 }).then(response => {
-                    console.log("Respuesta :",response)
+                    console.log("Respuesta :",response.data)
+                    this.listUsuarios =response.data
+
                 })
+            },
+            nextPage() {
+                this.pageNumber++;
+            },
+            prevPage() {
+                this.pageNumber--;
+            },
+            selectPage(page){
+                this.pageNumber = page;
             }
         },
 
