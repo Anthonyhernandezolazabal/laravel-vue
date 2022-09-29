@@ -12,3 +12,11 @@
     transform: translateX(-10px);
     opacity: 0;
 }
+
+.btnwidth{
+    width: 49% !important;
+}
+
+.el-select{
+    width: 100%;
+}

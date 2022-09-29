@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
-@include("sections.head")
+@include('sections.head')
+
 
 <body class="hold-transition sidebar-mini">
-<div class="wrapper" id="app">
-    <App ruta="{{route('basepath')}}"></App>
-</div>
+    <div class="wrapper" id="app">
+        <App ruta="{{route('basepath')}}"></App>
+    </div>
+    @include('sections.script')
 
-@include("sections.script")
 </body>
 </html>
