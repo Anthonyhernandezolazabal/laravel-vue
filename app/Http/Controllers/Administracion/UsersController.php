@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Administracion;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UsersController extends Controller
 {
-    public function getListaUsuarios(Request $request){
+    //
+    public function getListarUsuarios(Request $request){
         return $request;
     }
 }

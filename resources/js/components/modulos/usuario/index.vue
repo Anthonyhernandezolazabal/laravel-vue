@@ -192,13 +192,13 @@ import axios from 'axios';
                 this.listaUsuarios  = [];
             },
             getListaUsuarios(){
-                var url = "/administracion/usuarios/getListaUsuarios"
+                var url = "/administracion/usuario/getListarUsuarios"
                 axios.get(url,{
                     params: {
-                        "cNombre"   :   this.fillBsqUsuario.cNombre,
-                        "cUsuario"   :   this.fillBsqUsuario.cUsuario,
-                        "cCorreo"   :   this.fillBsqUsuario.cCorreo,
-                        "cEstado"   :   this.fillBsqUsuario.cEstado,
+                        "cNombre"       :   this.fillBsqUsuario.cNombre,
+                        "cUsuario"      :   this.fillBsqUsuario.cUsuario,
+                        "cCorreo"       :   this.fillBsqUsuario.cCorreo,
+                        "cEstado"       :   this.fillBsqUsuario.cEstado,
                     }
                 }).then(response => {
                     console.log("Respuesta :",response)

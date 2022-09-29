@@ -7462,7 +7462,7 @@ __webpack_require__.r(__webpack_exports__);
       this.listaUsuarios = [];
     },
     getListaUsuarios: function getListaUsuarios() {
-      var url = "/administracion/usuarios/getListaUsuarios";
+      var url = "/administracion/usuario/getListarUsuarios";
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(url, {
         params: {
           "cNombre": this.fillBsqUsuario.cNombre,
