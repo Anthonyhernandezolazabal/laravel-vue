@@ -1,0 +1,255 @@
+<template>
+
+  <div>
+    <!-- <h3> {{$route.params.id}}</h3> -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Editar Usuario</h1>
+                </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <div class="content container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-tools">
+                        <router-link class="btn btn-info btn-sm" :to="'/usuario'">
+                            <i class="fas fa-arrow-left"></i> Regresar
+                        </router-link>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Formulario Editar Usuario</h3>
+                            </div>
+                            <div class="card-body">
+                                <form role="form">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Primer Nombre</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" v-model="fillEditarUsuario.cPrimerNombre" @keyup.enter="setEditarUsuario">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Segundo Nombre</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" v-model="fillEditarUsuario.cSegundoNombre" @keyup.enter="setEditarUsuario">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Apellido</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" v-model="fillEditarUsuario.cApellido" @keyup.enter="setEditarUsuario">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Usuario</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" class="form-control" v-model="fillEditarUsuario.cUsuario" @keyup.enter="setEditarUsuario">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Correo Electronico</label>
+                                                <div class="col-md-9">
+                                                    <input type="email" class="form-control" v-model="fillEditarUsuario.cCorreo" @keyup.enter="setEditarUsuario">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Contraseña</label>
+                                                <div class="col-md-9">
+                                                    <el-input placeholder="Ingrese una contraseña" v-model="fillEditarUsuario.cContrasena" @keyup.enter="setEditarUsuario" show-password></el-input>
+                                                    <!-- <input type="password" class="form-control" v-model="fillEditarUsuario.cContrasena" @keyup.enter="setEditarUsuario"> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Fotografia</label>
+                                                <div class="col-md-9">
+                                                    <input type="file" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-4 offset-4">
+                                        <button class="btn btn-flat btn-info btnWidth" @click.prevent="setEditarUsuario" v-loading.fullscreen.lock="fullscreenLoading">Editar</button>
+                                        <button class="btn btn-flat btn-default btnWidth" @click.prevent="limpiarCriteriosBsq">Limpiar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+  </div>
+</template>
+
+<script>
+
+export default {
+    data(){
+        return{
+            fillEditarUsuario: {
+                nIdUsuario: this.$route.params.id,
+                cPrimerNombre: "",
+                cSegundoNombre: "",
+                cUsuario: "",
+                cCorreo: "",
+                cApellido: "",
+                cContrasena: '',
+                oFotografia: '',
+            },
+            modalShow: false,
+            form : new FormData,
+            fullscreenLoading: false,
+            mostrarModal: {
+                display: 'block',
+                background: '#0000006b',
+            },
+            ocultarModal: {
+                display: 'none',
+            },
+            error: 0,
+            mensajeError: []
+        }
+    },
+    mounted() {
+        this.getUsuarioById();
+    },
+    methods: {
+        getUsuarioById(){
+            this.fullscreenLoading = true;
+            var url = "/administracion/usuarios/getListaUsuarios"
+            axios.get(url,{
+                params: {
+                    "nIdUsuario"   :   this.fillEditarUsuario.nIdUsuario,
+                }
+            }).then(response => {
+                this.fillEditarUsuario.cPrimerNombre    =   response.data[0].firstname;
+                this.fillEditarUsuario.cSegundoNombre   =   response.data[0].secondname;
+                this.fillEditarUsuario.cApellido        =   response.data[0].lastname;
+                this.fillEditarUsuario.cUsuario         =   response.data[0].username;
+                this.fillEditarUsuario.cCorreo          =   response.data[0].email;
+                this.fullscreenLoading = false;
+            })
+        },
+        limpiarCriteriosBsq(){
+                this.fillEditarUsuario.cPrimerNombre= "";
+                this.fillEditarUsuario.cSegundoNombre= "";
+                this.fillEditarUsuario.cUsuario= "";
+                this.fillEditarUsuario.cCorreo= "";
+                this.fillEditarUsuario.cApellido= "";
+                this.fillEditarUsuario.cContrasena= '';
+                this.fillEditarUsuario.oFotografia= '';
+            },
+        getFile(e){
+            this.fillEditarUsuario.oFotografia = e.target.files[0];
+        },
+        setEditarUsuario(){
+            if (this.validarRegistrarUsuario()) {
+                this.modalShow = true;
+                return;
+            }
+            this.fullscreenLoading=true;
+            if (!this.fillEditarUsuario.oFotografia || this.fillEditarUsuario.oFotografia == undefined) {
+                //Registrará sin la imágen
+                this.setGuardarUsuario(0);
+            } else {
+                this.setRegistrarArchivo();
+            }
+        },
+        setRegistrarArchivo(){
+            this.form.append('file', this.fillEditarUsuario.oFotografia)
+            const config = { headers: { 'Content-Type': 'multipart/form-data'}}
+            var url = '/archivo/setRegistrarArchivo'
+            axios.post(url, this.form, config).then(response =>{
+                var nIdFile = response.data[0].nIdFile;
+                this.setGuardarUsuario(nIdFile);
+            })
+        },
+        setGuardarUsuario(nIdFile){
+            var url = '/administracion/usuario/setEditarUsuario'
+            console.log("Editar archivo :",this.fillEditarUsuario.nIdUsuario);
+            console.log("Editar archivo :",this.fillEditarUsuario.cPrimerNombre);
+            console.log("Editar archivo :",this.fillEditarUsuario.cSegundoNombre);
+            console.log("Editar archivo :",this.fillEditarUsuario.cApellido);
+            console.log("Editar archivo :",this.fillEditarUsuario.cUsuario);
+            console.log("Editar archivo :",this.fillEditarUsuario.cCorreo);
+            console.log("Editar archivo :",this.fillEditarUsuario.cContrasena);
+            axios.post(url, {
+                'nIdUsuario'    :   this.fillEditarUsuario.nIdUsuario,
+                'cPrimerNombre' :   this.fillEditarUsuario.cPrimerNombre,
+                'cSegundoNombre':   this.fillEditarUsuario.cSegundoNombre,
+                'cApellido'     :   this.fillEditarUsuario.cApellido,
+                'cUsuario'      :   this.fillEditarUsuario.cUsuario,
+                'cCorreo'       :   this.fillEditarUsuario.cCorreo,
+                'cContrasena'   :   this.fillEditarUsuario.cContrasena,
+                'oFotografia'   :   nIdFile
+            }).then(response => {
+                this.fullscreenLoading = false;
+                Swal.fire({
+                    position: 'top-center',
+                    icon: 'success',
+                    title: 'Se actualizó el usuario correctamente',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.$router.push('/usuario')
+            })
+        },
+        abrirModal(){
+            this.modalShow = !this.modalShow;
+        },
+        validarRegistrarUsuario(){
+            this.error = 0;
+            this.mensajeError = [];
+
+            if (!this.fillEditarUsuario.cPrimerNombre) {
+                this.mensajeError.push("El Primer Nombre es un campo obligatorio")
+            }
+            if (!this.fillEditarUsuario.cApellido) {
+                this.mensajeError.push("El Apellido es un campo obligatorio")
+            }
+            if (!this.fillEditarUsuario.cUsuario) {
+                this.mensajeError.push("El Usuario es un campo obligatorio")
+            }
+            if (!this.fillEditarUsuario.cCorreo) {
+                this.mensajeError.push("El Correo es un campo obligatorio")
+            }
+
+            if (this.mensajeError.length) {
+                this.error = 1;
+            }
+            return this.error;
+        }
+
+    },
+
+}
+</script>
+
+<style>
+
+</style>

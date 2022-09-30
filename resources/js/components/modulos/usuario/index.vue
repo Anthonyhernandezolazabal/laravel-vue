@@ -117,13 +117,20 @@
                             <tbody>
                                 <tr v-for="(item, index) in listarUsuariosPaginated" :key="index">
                                     <td>
-                                        <li class="user-block">
-                                            <img src="/img/avatar.png" :alt="item.username" class="profile-avatar-img img-fluid img-circle">
-                                        </li>
+                                        <template v-if="!item.profile_image">
+                                            <li class="user-block">
+                                                <img src="/img/avatar.png" :alt="item.username" class="profile-avatar-img img-fluid img-circle">
+                                            </li>
+                                        </template>
+                                        <template v-else>
+                                            <li class="user-block">
+                                                <img :src="item.profile_image" :alt="item.username" class="profile-avatar-img img-fluid img-circle">
+                                            </li>
+                                        </template>
                                     </td>
-                                    <td v-text="item.fullname">Anthony</td>
-                                    <td v-text="item.email">Anthony</td>
-                                    <td v-text="item.username">Anthony</td>
+                                    <td v-text="item.fullname"></td>
+                                    <td v-text="item.email"></td>
+                                    <td v-text="item.username"></td>
                                     <td>
                                         <template v-if="item.state == 'A'">
                                             <span class="badge badge-success">Activo</span>
@@ -133,11 +140,17 @@
                                         </template>
                                     </td>
                                     <td>
-                                        <router-link  class="btn btn-primary btn-sm" type="button" :to="'/'"><i class="fas fa-folder"></i> Ver</router-link>
-                                        <button class="btn btn-info btn-sm" type="button"><i class="fas fa-pencil-alt"></i> Editar</button>
-                                        <button class="btn btn-success btn-sm" type="button"><i class="fas fa-key"></i> Permmiso</button>
-                                        <button class="btn btn-danger btn-sm" type="button"><i class="fas fa-trash"></i> Desactivar</button>
-                                        <button class="btn btn-success btn-sm" type="button"><i class="fas fa-check"></i> Activar</button>
+                                        <template v-if="item.state == 'A'">
+                                            <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="'/'"><i class="fas fa-folder"></i> Ver</router-link>
+                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'usuario.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
+                                            <router-link class="btn btn-flat btn-success btn-sm" type="button" :to="'/'"><i class="fas fa-key"></i> Permmiso</router-link>
+                                            <router-link class="btn btn-flat btn-danger btn-sm"  type="button" :to="'/'"><i class="fas fa-trash"></i> Desactivar</router-link>
+                                        </template>
+
+                                        <template v-else>
+                                            <router-link class="btn btn-flat btn-success btn-sm" type="button" :to="'/'"><i class="fas fa-check"></i> Activar</router-link>
+                                        </template>
+
                                     </td>
                                 </tr>
                             </tbody>

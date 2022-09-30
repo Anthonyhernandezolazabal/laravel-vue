@@ -16,6 +16,7 @@ use App\Http\Controllers\FilesController;
 
 Route::get('/administracion/usuarios/getListaUsuarios', [UserController::class, 'getListaUsuarios']);
 Route::post('/administracion/usuario/setRegistrarUsuario', [UserController::class, 'setRegistrarUsuario']);
+Route::post('/administracion/usuario/setEditarUsuario', [UserController::class, 'setEditarUsuario']);
 Route::post('/archivo/setRegistrarArchivo', [FilesController::class, 'setRegistrarArchivo']);
 
 
