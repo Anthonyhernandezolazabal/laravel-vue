@@ -13,7 +13,10 @@ export default new Router({
         {path: "/producto",component: require("./components/modulos/producto/index").default},
         {path: "/reporte",component: require("./components/modulos/reporte/index").default},
         {path: "/rol",component: require("./components/modulos/rol/index").default},
-        {path: "/usuario",component: require("./components/modulos/usuario/index").default}
+        {path: "/usuario",component: require("./components/modulos/usuario/index").default},
+        {path: "/usuario/crear",component: require("./components/modulos/usuario/create").default}
     ],
-    mode: "history"
+    mode: "history",
+    // linkExactActiveClass: 'active' //Activar el módulo donde estoy
+    linkActiveClass: 'active' //El módulo se mantenga seleccionado
 })

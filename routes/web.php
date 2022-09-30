@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Administracion\UserController;
+use App\Http\Controllers\FilesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,8 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{optionsl?}', function () {
-    return view('app');
-})->name('basepath');
+Route::get('/administracion/usuarios/getListaUsuarios', [UserController::class, 'getListaUsuarios']);
+Route::post('/administracion/usuario/setRegistrarUsuario', [UserController::class, 'setRegistrarUsuario']);
+Route::post('/archivo/setRegistrarArchivo', [FilesController::class, 'setRegistrarArchivo']);
 
-Route::get("/administracion/usuarios/getListaUsuarios", "Administracion\UserController@getListaUsuarios");
+
+Route::get('/{optional?}', function () {
+    return view('app');
+})->name('basepath')
+->where('optional','.*');

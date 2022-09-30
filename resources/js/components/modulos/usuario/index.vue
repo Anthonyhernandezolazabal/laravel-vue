@@ -21,7 +21,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-tools"><!-- Lado izquierdo -->
-                        <router-link :to="'/'" class="btn btn-info btn-sm">
+                        <router-link :to="'/usuario/crear'" class="btn btn-info btn-sm">
                             <i class="fas fa-plus-square"></i> Nuevo Usuario
                         </router-link>
                     </div>
@@ -40,7 +40,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Nombre</label>
                                                 <div class="col-md-9">
-                                                    <input type="text" class="form-control" v-model="fillBsqUsuario.cNombre">
+                                                    <input type="text" class="form-control" @keyup.enter="getListaUsuarios" v-model="fillBsqUsuario.cNombre">
                                                 </div>
                                             </div>
                                         </div>
@@ -48,7 +48,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Usuario</label>
                                                 <div class="col-md-9">
-                                                    <input type="text" class="form-control" v-model="fillBsqUsuario.cUsuario">
+                                                    <input type="text" class="form-control" @keyup.enter="getListaUsuarios" v-model="fillBsqUsuario.cUsuario">
                                                 </div>
                                             </div>
                                         </div>
@@ -56,7 +56,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Correo Electrónico</label>
                                                 <div class="col-md-9">
-                                                    <input type="email" class="form-control" v-model="fillBsqUsuario.cCorreo">
+                                                    <input type="email" class="form-control" @keyup.enter="getListaUsuarios" v-model="fillBsqUsuario.cCorreo">
                                                 </div>
                                             </div>
                                         </div>
@@ -64,7 +64,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Estado</label>
                                                 <div class="col-md-9">
-                                                    <el-select v-model="fillBsqUsuario.cEstado" placeholder="Selecciona un estado" clearable>
+                                                    <el-select @keyup.enter="getListaUsuarios" v-model="fillBsqUsuario.cEstado" placeholder="Selecciona un estado" clearable>
                                                         <el-option
                                                         v-for="item in listEstados"
                                                         :key="item.value"
@@ -87,7 +87,7 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-md-4 offset-4">
-                            <button class="btn btn-float btn-info btnwidth" @click.prevent="getListaUsuarios">Buscar</button>
+                            <button class="btn btn-float btn-info btnwidth" @click.prevent="getListaUsuarios" v-loading.fullscreen.lock="fullscreenLoading">Buscar</button>
                             <button class="btn btn-float btn-default btnwidth" @click.prevent="limpiarCriteriosBsq">Limpiar</button>
                         </div>
                     </div>
@@ -159,7 +159,7 @@
                         </div>
                     </template>
 
-                    <template>
+                    <template v-else>
                         <div class="callout callout-info">
                             <h5>No se encontraron resultados...</h5>
                         </div>
@@ -177,9 +177,7 @@
 
 <script>
 import axios from 'axios';
-
     export default {
-
         data(){
             return{
                 fillBsqUsuario: {
@@ -193,6 +191,7 @@ import axios from 'axios';
                     {value: "A", label: "Activo"},
                     {value: "I", label: "Inactivo"}
                 ],
+                fullscreenLoading:false,
                 pageNumber: 0, //Número de la página paginada
                 perPage: 5, //Número de registros a mostrar por paginación
             }
@@ -225,7 +224,6 @@ import axios from 'axios';
                 }
                 return pagesArray;
             }
-
         },
         methods: {
             limpiarCriteriosBsq(){
@@ -238,6 +236,7 @@ import axios from 'axios';
                 this.listUsuarios  = [];
             },
             getListaUsuarios(){
+                this.fullscreenLoading = true;
                 var url = "/administracion/usuarios/getListaUsuarios"
                 axios.get(url,{
                     params: {
@@ -247,8 +246,9 @@ import axios from 'axios';
                         "cEstado"   :   this.fillBsqUsuario.cEstado,
                     }
                 }).then(response => {
-                    console.log("Respuesta :",response.data)
+                    this.inicializarPaginacion();
                     this.listUsuarios =response.data
+                    this.fullscreenLoading = false;
 
                 })
             },
@@ -260,6 +260,9 @@ import axios from 'axios';
             },
             selectPage(page){
                 this.pageNumber = page;
+            },
+            inicializarPaginacion(){
+                this.pageNumber = 0;
             }
         },
 
