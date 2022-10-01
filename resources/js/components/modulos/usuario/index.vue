@@ -144,11 +144,12 @@
                                             <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="'/'"><i class="fas fa-folder"></i> Ver</router-link>
                                             <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'usuario.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
                                             <router-link class="btn btn-flat btn-success btn-sm" type="button" :to="'/'"><i class="fas fa-key"></i> Permmiso</router-link>
-                                            <router-link class="btn btn-flat btn-danger btn-sm"  type="button" :to="'/'"><i class="fas fa-trash"></i> Desactivar</router-link>
+                                            <button class="btn btn-flat btn-danger btn-sm"  type="button" :to="'/'" @click.prevent="setCambiarEstadoUsuario(1, item.id)"><i class="fas fa-trash"></i> Desactivar</button>
                                         </template>
 
                                         <template v-else>
-                                            <router-link class="btn btn-flat btn-success btn-sm" type="button" :to="'/'"><i class="fas fa-check"></i> Activar</router-link>
+                                            <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="'/'"><i class="fas fa-folder"></i> Ver</router-link>
+                                            <button class="btn btn-flat btn-success btn-sm" type="button" @click.prevent="setCambiarEstadoUsuario(2, item.id)"><i class="fas fa-check"></i> Activar</button>
                                         </template>
 
                                     </td>
@@ -276,6 +277,35 @@ import axios from 'axios';
             },
             inicializarPaginacion(){
                 this.pageNumber = 0;
+            },
+            setCambiarEstadoUsuario(op, id){
+                Swal.fire({
+                    title: 'Estás seguro de '+ ((op == 1) ? "desactivar" : "activar") + "el usuario ?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: ((op == 1) ? "Si, desactivar" : "Si, activar")
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Aquí ira la confirmación del boton, es decir la petición al servidor
+                        this.fullscreenLoading = true;
+                        var url = '/administracion/usuario/setCambiarEstadoUsuario'
+                        axios.post(url, {
+                            'nIdUsuario' : id,
+                            'cEstado'    : (op == 1) ? 'I' : 'A'
+                        }).then(response => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Usuario '+ (op==1) ? "inactivo" : "activo",
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.getListaUsuarios();
+
+                        })
+                    }
+                })
             }
         },
 
