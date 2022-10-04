@@ -208,7 +208,6 @@ export default {
                 'cContrasena'   :   this.fillCrearUsuario.cContrasena,
                 'oFotografia'   :   nIdFile
             }).then(response => {
-                console.log("Registrar archivo :",response);
                 this.fullscreenLoading = false;
                 this.$router.push('/usuario')
             })

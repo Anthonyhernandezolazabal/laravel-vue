@@ -47,7 +47,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
-                                                <label class="col-md-3 col-form-label">Apellido</label>
+                                                <label class="col-md-3 col-form-label">Apellidos</label>
                                                 <div class="col-md-9">
                                                     <input type="text" class="form-control" v-model="fillEditarUsuario.cApellido" @keyup.enter="setEditarUsuario">
                                                 </div>
@@ -82,7 +82,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Fotografia</label>
                                                 <div class="col-md-9">
-                                                    <input type="file" class="form-control">
+                                                    <input type="file" class="form-control" @change="getFile">
                                                 </div>
                                             </div>
                                         </div>
@@ -98,6 +98,23 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" :class="{ show: modalShow }" :style=" modalShow ? mostrarModal : ocultarModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Sistema Laravel y Vue</h5>
+                        <button class="close" @click="abrirModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="callout callout-danger" style="padding: 5px" v-for="(item, index) in mensajeError" :key="index" v-text="item"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @click="abrirModal">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -191,13 +208,6 @@ export default {
         },
         setGuardarUsuario(nIdFile){
             var url = '/administracion/usuario/setEditarUsuario'
-            console.log("Editar archivo :",this.fillEditarUsuario.nIdUsuario);
-            console.log("Editar archivo :",this.fillEditarUsuario.cPrimerNombre);
-            console.log("Editar archivo :",this.fillEditarUsuario.cSegundoNombre);
-            console.log("Editar archivo :",this.fillEditarUsuario.cApellido);
-            console.log("Editar archivo :",this.fillEditarUsuario.cUsuario);
-            console.log("Editar archivo :",this.fillEditarUsuario.cCorreo);
-            console.log("Editar archivo :",this.fillEditarUsuario.cContrasena);
             axios.post(url, {
                 'nIdUsuario'    :   this.fillEditarUsuario.nIdUsuario,
                 'cPrimerNombre' :   this.fillEditarUsuario.cPrimerNombre,
