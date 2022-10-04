@@ -86,15 +86,11 @@
                                     <td v-text="item.name"></td>
                                     <td v-text="item.slug"></td>
                                     <td>
-                                        <template v-if="item.state == 'A'">
+                                        <template>
                                             <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="{name:'usuario.ver', params:{id: item.id}}"><i class="fas fa-folder"></i> Ver</router-link>
-                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'usuario.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
+                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'rol.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
                                         </template>
 
-                                        <template v-else>
-                                            <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="{name:'usuario.ver', params:{id: item.id}}"><i class="fas fa-folder"></i> Ver</router-link>
-                                            <button class="btn btn-flat btn-success btn-sm" type="button" @click.prevent="setCambiarEstadoUsuario(2, item.id)"><i class="fas fa-check"></i> Activar</button>
-                                        </template>
 
                                     </td>
                                 </tr>
@@ -183,7 +179,7 @@ import axios from 'axios';
                 this.fillBsqRol.cUrl    = "";
             },
             limpiarBandejaUsuarios(){
-                this.listUsuarios  = [];
+                this.listRoles  = [];
             },
             getListarRoles(){
                 this.fullscreenLoading = true;
@@ -194,9 +190,8 @@ import axios from 'axios';
                         "cUrl"   :   this.fillBsqRol.cUrl,
                     }
                 }).then(response => {
-                    console.log("response :",response)
                     this.inicializarPaginacion();
-                    this.listUsuarios =response.data
+                    this.listRoles   =   response.data;
                     this.fullscreenLoading = false;
 
                 })

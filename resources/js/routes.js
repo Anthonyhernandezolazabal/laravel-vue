@@ -27,6 +27,12 @@ export default new Router({
             component: require("./components/modulos/usuario/view").default,
             props:true
         },
+        {
+            path: "/rol/editar/:id",
+            name: "rol.editar",
+            component: require("./components/modulos/rol/edit").default,
+            props:true
+        },
 
         {path: "/usuario/crear",component: require("./components/modulos/usuario/create").default}
     ],

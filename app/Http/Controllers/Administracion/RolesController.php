@@ -13,14 +13,17 @@ class RolesController extends Controller
     {
         if (!$request->ajax()) return redirect("/");
 
+        $nIdRol     =   $request->nIdRol;
         $cNombre     =   $request->cNombre;
         $cSlug        =   $request->cSlug;
 
+        $nIdRol     =   ($nIdRol   ==  NULL) ? ($nIdRol   =   0) :   $nIdRol;
         $cNombre            =   ($cNombre == Null) ? ($cNombre = "") : $cNombre; //Si es null lo setea vacío, de lo contrario lo mantiene con el valor que se envió
         $cSlug           =   ($cSlug == Null) ? ($cSlug = "") : $cSlug;
         //Procedimiento almacenado
-        $rpta       =   DB::select("call sp_Rol_getListarRoles (?, ?)",
+        $rpta       =   DB::select("call sp_Rol_getListarRoles (?, ?, ?)",
                                                                 [
+                                                                    $nIdRol,
                                                                     $cNombre,
                                                                     $cSlug
                                                                 ]);
@@ -28,10 +31,17 @@ class RolesController extends Controller
     }
     public function getListarPermisosByRol(Request $request)
     {
-        if (!$request->ajax()) return redirect("/");
+        if(!$request->ajax()) return redirect('/');
+
+        $nIdRol     =   $request->nIdRol;
+
+        $nIdRol     =   ($nIdRol   ==  NULL) ? ($nIdRol   =   0) :   $nIdRol;
+
 
         //Procedimiento almacenado
-        $rpta       =   DB::select("call sp_Rol_getListarPermisosByRol");
+        $rpta       =   DB::select('call sp_Rol_getListarPermisosByRol (?)',    [
+                                                                                    $nIdRol
+                                                                                ]);
         return $rpta;
     }
     public function setRegistrarRolPermisos(Request $request)
@@ -79,7 +89,48 @@ class RolesController extends Controller
 
     }
 
+    public function setEditarRolPermisos(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
 
+        $nIdRol     =   $request->nIdRol;
+        $cNombre    =   $request->cNombre;
+        $cSlug      =   $request->cSlug;
+
+        $nIdRol     =   ($nIdRol   ==  NULL) ? ($nIdRol   =   '') :   $nIdRol;
+        $cNombre    =   ($cNombre   ==  NULL) ? ($cNombre   =   '') :   $cNombre;
+        $cSlug      =   ($cSlug   ==  NULL) ? ($cSlug   =   '') :   $cSlug;
+
+        try {
+            // Ira todo el codigo que deseamos realizar
+            DB::beginTransaction();
+
+            $rpta       =   DB::select('call sp_Rol_setEditarRol (?, ?, ?)',
+                                                                    [
+                                                                        $nIdRol,
+                                                                        $cNombre,
+                                                                        $cSlug
+                                                                    ]);
+
+            $listPermisos       =   $request->listPermisosFilter;
+            $listPermisosSize   =   sizeof($listPermisos);
+            if ($listPermisosSize > 0) {
+                foreach ($listPermisos as $key => $value) {
+                    if ($value['checked'] == true) {
+                        DB::select('call sp_Rol_setRegistrarRolPermiso (?, ?)',
+                                                                [
+                                                                    $nIdRol,
+                                                                    $value['id']
+                                                                ]);
+                    }
+                }
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            // capturara algun error ocurrido en el "try"
+            DB::rollBack();
+        }
+    }
 
 
 }
