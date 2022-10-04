@@ -11,6 +11,12 @@ export default new Router({
         {path: "/pedido",component: require("./components/modulos/pedido/index").default},
         {path: "/permiso",component: require("./components/modulos/permiso/index").default},
         {path: "/permiso/crear",component: require("./components/modulos/permiso/create").default},
+        {
+            path: "/permiso/editar/:id",
+            name: "permiso.editar",
+            component: require("./components/modulos/permiso/edit").default,
+            props:true
+        },
 
 
         {path: "/producto",component: require("./components/modulos/producto/index").default},

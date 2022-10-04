@@ -88,7 +88,7 @@
                                     <td>
                                         <template>
 
-                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'rol.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
+                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'permiso.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
                                         </template>
 
 

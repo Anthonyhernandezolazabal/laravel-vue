@@ -33,6 +33,7 @@ Route::post('/administracion/rol/setEditarRolPermisos', [RolesController::class,
 Route::post('/archivo/setRegistrarArchivo', [FilesController::class, 'setRegistrarArchivo']);
 Route::get('/administracion/permiso/getListarPermisos', [PermissionController::class, 'getListarPermisos']);
 Route::post('/administracion/permiso/setRegistrarPermiso', [PermissionController::class, 'setRegistrarPermiso']);
+Route::post('/administracion/permiso/setEditarPermiso', [PermissionController::class, 'setEditarPermiso']);
 
 
 Route::get('/{optional?}', function () {
