@@ -42,3 +42,11 @@
 .user-block{
     list-style:none;
 }
+.scrollTable2 {
+    max-height: 390px !important;
+    overflow: auto !important;
+}
+.scrollTable {
+    max-height: 190px !important;
+    overflow: auto !important;
+}

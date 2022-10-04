@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Administracion\UserController;
 use App\Http\Controllers\Administracion\RolesController;
+use App\Http\Controllers\Administracion\PermissionController;
 use App\Http\Controllers\FilesController;
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,7 @@ Route::post('/administracion/rol/setEditarRolPermisos', [RolesController::class,
 
 
 Route::post('/archivo/setRegistrarArchivo', [FilesController::class, 'setRegistrarArchivo']);
+Route::get('/administracion/permiso/getListarPermisos', [PermissionController::class, 'getListarPermisos']);
 
 
 Route::get('/{optional?}', function () {

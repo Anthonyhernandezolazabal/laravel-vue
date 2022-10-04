@@ -69,25 +69,27 @@
 
                                     <div class="card-body table-responsive">
                                         <template v-if="listPermisosFilter.length">
-                                            <table class="table table-hover table-head-fixed text-nowrap projects">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Acciones</th>
-                                                        <th>Foto</th>
-                                                        <th>Nombre</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="(item, index) in listPermisosFilter" :key="index"  @click.prevent="marcarFila(index)">
-                                                        <td>
-                                                            <el-checkbox v-model="item.checked"></el-checkbox>
-                                                        </td>
-                                                        <td v-text="item.name"></td>
-                                                        <td v-text="item.slug"></td>
+                                            <div class="scrollTable2">
+                                                <table class="table table-hover table-head-fixed text-nowrap projects">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Acciones</th>
+                                                            <th>Nombre</th>
+                                                            <th>Url Amigable</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(item, index) in listPermisosFilter" :key="index"  @click.prevent="marcarFila(index)">
+                                                            <td>
+                                                                <el-checkbox v-model="item.checked"></el-checkbox>
+                                                            </td>
+                                                            <td v-text="item.name"></td>
+                                                            <td v-text="item.slug"></td>
 
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </template>
 
                                         <template v-else>
