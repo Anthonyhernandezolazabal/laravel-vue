@@ -15,7 +15,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-tools"><!-- Lado izquierdo -->
-                        <router-link :to="'/rol/crear'" class="btn btn-info btn-sm">
+                        <router-link :to="'/permiso/crear'" class="btn btn-info btn-sm">
                             <i class="fas fa-plus-square"></i> Nuevo Permiso
                         </router-link>
                     </div>

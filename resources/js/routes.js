@@ -10,6 +10,9 @@ export default new Router({
         {path: "/cliente",component: require("./components/modulos/cliente/index").default},
         {path: "/pedido",component: require("./components/modulos/pedido/index").default},
         {path: "/permiso",component: require("./components/modulos/permiso/index").default},
+        {path: "/permiso/crear",component: require("./components/modulos/permiso/create").default},
+
+
         {path: "/producto",component: require("./components/modulos/producto/index").default},
         {path: "/reporte",component: require("./components/modulos/reporte/index").default},
         {path: "/rol",component: require("./components/modulos/rol/index").default},
