@@ -8893,6 +8893,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -8903,8 +8919,10 @@ __webpack_require__.r(__webpack_exports__);
         cCorreo: "",
         cApellido: "",
         cContrasena: '',
-        oFotografia: ''
+        oFotografia: '',
+        nIdRol: ''
       },
+      listRoles: [],
       modalShow: false,
       form: new FormData(),
       fullscreenLoading: false,
@@ -8918,6 +8936,9 @@ __webpack_require__.r(__webpack_exports__);
       error: 0,
       mensajeError: []
     };
+  },
+  mounted: function mounted() {
+    this.getListarRoles();
   },
   methods: {
     limpiarCriteriosBsq: function limpiarCriteriosBsq() {
@@ -8976,13 +8997,44 @@ __webpack_require__.r(__webpack_exports__);
         'cContrasena': this.fillCrearUsuario.cContrasena,
         'oFotografia': nIdFile
       }).then(function (response) {
-        _this2.fullscreenLoading = false;
+        _this2.setEditarRolByUsuario(response.data);
+      });
+    },
+    setEditarRolByUsuario: function setEditarRolByUsuario(nIdUsuario) {
+      var _this3 = this;
 
-        _this2.$router.push('/usuario');
+      var url = '/administracion/usuario/setEditarRolByUsuario';
+      axios.post(url, {
+        'nIdUsuario': nIdUsuario,
+        'nIdRol': this.fillCrearUsuario.nIdRol
+      }).then(function (response) {
+        _this3.fullscreenLoading = false;
+
+        _this3.$router.push('/usuario');
       });
     },
     abrirModal: function abrirModal() {
       this.modalShow = !this.modalShow;
+    },
+    getListarRoles: function getListarRoles() {
+      var _this4 = this;
+
+      this.fullscreenLoading = true;
+      var url = '/administracion/rol/getListarRoles';
+      axios.get(url).then(function (response) {
+        _this4.listRoles = response.data;
+        _this4.fullscreenLoading = false;
+      })["catch"](function (error) {
+        if (error.response.status == 401) {
+          _this4.$router.push({
+            name: 'login'
+          });
+
+          location.reload();
+          sessionStorage.clear();
+          _this4.fullscreenLoading = false;
+        }
+      });
     },
     validarRegistrarUsuario: function validarRegistrarUsuario() {
       this.error = 0;
@@ -104518,6 +104570,71 @@ var render = function () {
                                 expression: "fillCrearUsuario.cContrasena",
                               },
                             }),
+                          ],
+                          1
+                        ),
+                      ]),
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-6" }, [
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c(
+                          "label",
+                          { staticClass: "col-md-3 col-form-label" },
+                          [_vm._v("Rol")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "col-md-9" },
+                          [
+                            _c(
+                              "el-select",
+                              {
+                                attrs: {
+                                  placeholder: "Selecciona un rol",
+                                  clearable: "",
+                                },
+                                on: {
+                                  keyup: function ($event) {
+                                    if (
+                                      !$event.type.indexOf("key") &&
+                                      _vm._k(
+                                        $event.keyCode,
+                                        "enter",
+                                        13,
+                                        $event.key,
+                                        "Enter"
+                                      )
+                                    ) {
+                                      return null
+                                    }
+                                    return _vm.getListaUsuarios.apply(
+                                      null,
+                                      arguments
+                                    )
+                                  },
+                                },
+                                model: {
+                                  value: _vm.fillCrearUsuario.nIdRol,
+                                  callback: function ($$v) {
+                                    _vm.$set(
+                                      _vm.fillCrearUsuario,
+                                      "nIdRol",
+                                      $$v
+                                    )
+                                  },
+                                  expression: "fillCrearUsuario.nIdRol",
+                                },
+                              },
+                              _vm._l(_vm.listRoles, function (item) {
+                                return _c("el-option", {
+                                  key: item.id,
+                                  attrs: { label: item.name, value: item.id },
+                                })
+                              }),
+                              1
+                            ),
                           ],
                           1
                         ),

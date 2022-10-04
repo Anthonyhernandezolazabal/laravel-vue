@@ -84,6 +84,22 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Rol</label>
+                                                <div class="col-md-9">
+                                                    <el-select @keyup.enter="getListaUsuarios" v-model="fillCrearUsuario.nIdRol" placeholder="Selecciona un rol" clearable>
+                                                        <el-option
+                                                        v-for="item in listRoles"
+                                                        :key="item.id"
+                                                        :label="item.name"
+                                                        :value="item.id">
+                                                        </el-option>
+                                                    </el-select>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Fotografía</label>
                                                 <div class="col-md-9">
                                                     <input type="file" class="form-control" @change="getFile">
@@ -146,7 +162,9 @@ export default {
                 cApellido: "",
                 cContrasena: '',
                 oFotografia: '',
+                nIdRol: ''
             },
+            listRoles: [],
             modalShow: false,
             form : new FormData,
             fullscreenLoading: false,
@@ -160,6 +178,9 @@ export default {
             error: 0,
             mensajeError: []
         }
+    },
+    mounted() {
+        this.getListarRoles();
     },
     methods: {
 
@@ -208,12 +229,40 @@ export default {
                 'cContrasena'   :   this.fillCrearUsuario.cContrasena,
                 'oFotografia'   :   nIdFile
             }).then(response => {
-                this.fullscreenLoading = false;
-                this.$router.push('/usuario')
+                this.setEditarRolByUsuario(response.data);
             })
         },
+
+
+        setEditarRolByUsuario(nIdUsuario){
+                var url = '/administracion/usuario/setEditarRolByUsuario'
+                axios.post(url, {
+                    'nIdUsuario'    :   nIdUsuario,
+                    'nIdRol'        :   this.fillCrearUsuario.nIdRol
+                }).then(response => {
+                    this.fullscreenLoading = false;
+                    this.$router.push('/usuario');
+                })
+            },
+
         abrirModal(){
             this.modalShow = !this.modalShow;
+        },
+        getListarRoles(){
+            this.fullscreenLoading = true;
+
+            var url = '/administracion/rol/getListarRoles'
+            axios.get(url).then(response => {
+                this.listRoles   =   response.data;
+                this.fullscreenLoading = false;
+            }).catch(error => {
+                if (error.response.status == 401) {
+                    this.$router.push({name: 'login'})
+                    location.reload();
+                    sessionStorage.clear();
+                    this.fullscreenLoading = false;
+                }
+            })
         },
         validarRegistrarUsuario(){
             this.error = 0;
