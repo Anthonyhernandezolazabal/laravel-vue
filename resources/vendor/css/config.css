@@ -32,3 +32,8 @@
     max-height: 190px !important;
     overflow: auto !important;
 }
+
+.scrollTable3 {
+    max-height: 253px !important;
+    overflow: auto !important;
+}

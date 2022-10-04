@@ -143,7 +143,7 @@
                                         <template v-if="item.state == 'A'">
                                             <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="{name:'usuario.ver', params:{id: item.id}}"><i class="fas fa-folder"></i> Ver</router-link>
                                             <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'usuario.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
-                                            <router-link class="btn btn-flat btn-success btn-sm" type="button" :to="'/'"><i class="fas fa-key"></i> Permisos</router-link>
+                                            <router-link class="btn btn-flat btn-success btn-sm" type="button" :to="{name:'usuario.permiso', params:{id: item.id}}"><i class="fas fa-key"></i> Permisos</router-link>
                                             <button class="btn btn-flat btn-danger btn-sm"  type="button" :to="'/'" @click.prevent="setCambiarEstadoUsuario(1, item.id)"><i class="fas fa-trash"></i> Desactivar</button>
                                         </template>
 

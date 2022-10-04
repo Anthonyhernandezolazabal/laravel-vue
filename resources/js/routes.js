@@ -37,6 +37,12 @@ export default new Router({
             props:true
         },
         {
+            path: "/usuario/permiso/:id",
+            name: "usuario.permiso",
+            component: require("./components/modulos/usuario/permission").default,
+            props:true
+        },
+        {
             path: "/rol/editar/:id",
             name: "rol.editar",
             component: require("./components/modulos/rol/edit").default,

@@ -78,6 +78,23 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 col-form-label">Rol</label>
+                                                <div class="col-md-9">
+                                                    <el-select @keyup.enter="getListaUsuarios" v-model="fillEditarUsuario.nIdRol" placeholder="Selecciona un rol" clearable>
+                                                        <el-option
+                                                        v-for="item in listRoles"
+                                                        :key="item.id"
+                                                        :label="item.name"
+                                                        :value="item.id">
+                                                        </el-option>
+                                                    </el-select>
+                                                </div>
+
+                                            </div>
+                                        </div>
                                         <div class="col-md-6">
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Fotografia</label>
@@ -137,7 +154,9 @@ export default {
                 cApellido: "",
                 cContrasena: '',
                 oFotografia: '',
+                nIdRol: ''
             },
+            listRoles: [],
             modalShow: false,
             form : new FormData,
             fullscreenLoading: false,
@@ -154,6 +173,7 @@ export default {
     },
     mounted() {
         this.getUsuarioById();
+        this.getListarRoles();
     },
     methods: {
         getUsuarioById(){
@@ -206,6 +226,7 @@ export default {
                 this.setGuardarUsuario(nIdFile);
             })
         },
+
         setGuardarUsuario(nIdFile){
             var url = '/administracion/usuario/setEditarUsuario'
             axios.post(url, {
@@ -218,20 +239,53 @@ export default {
                 'cContrasena'   :   this.fillEditarUsuario.cContrasena,
                 'oFotografia'   :   nIdFile
             }).then(response => {
-                this.fullscreenLoading = false;
-                Swal.fire({
-                    position: 'top-center',
-                    icon: 'success',
-                    title: 'Se actualizó el usuario correctamente',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                this.$router.push('/usuario')
+                // console.log(response.data);
+                this.setEditarRolByUsuario();
             })
         },
+
+            setEditarRolByUsuario(){
+                var url = '/administracion/usuario/setEditarRolByUsuario'
+                axios.post(url, {
+                    'nIdUsuario'    :   this.fillEditarUsuario.nIdUsuario,
+                    'nIdRol'        :   this.fillEditarUsuario.nIdRol
+                }).then(response => {
+                    this.fullscreenLoading = false;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Se actualizo el usuario correctamente',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                })
+            },
+
         abrirModal(){
             this.modalShow = !this.modalShow;
         },
+
+        getListarRoles(){
+                this.fullscreenLoading = true;
+
+                var url = '/administracion/rol/getListarRoles'
+                axios.get(url).then(response => {
+                    this.listRoles   =   response.data;
+                    this.getRolByUsuario();
+                })
+        },
+        getRolByUsuario(){
+            var url = '/administracion/usuario/getRolByUsuario'
+            axios.get(url,{
+                params: {
+                    'nIdUsuario'    :   this.fillEditarUsuario.nIdUsuario
+                }
+            }).then(response => {
+                console.log("response ::::::",response)
+                this.fillEditarUsuario.nIdRol   =   (response.data.length == 0) ? '' : response.data[0].nIdRol;
+                this.fullscreenLoading = false;
+            })
+        },
+
         validarRegistrarUsuario(){
             this.error = 0;
             this.mensajeError = [];
@@ -249,6 +303,9 @@ export default {
                 this.mensajeError.push("El Correo es un campo obligatorio")
             }
 
+            if (!this.fillEditarUsuario.nIdRol) {
+                    this.mensajeError.push("Debe seleccionar el Rol, es un campo obligatorio")
+                }
             if (this.mensajeError.length) {
                 this.error = 1;
             }
