@@ -15,9 +15,11 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-tools"><!-- Lado izquierdo -->
-                        <router-link :to="'/rol/crear'" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus-square"></i> Nuevo rol
-                        </router-link>
+                        <template v-if="listRolPermisosByUsuario.includes('rol.crear')">
+                            <router-link class="btn btn-info btn-sm" :to="{name: 'rol.crear'}">
+                                <i class="fas fa-plus-square"></i> Nuevo Rol
+                            </router-link>
+                        </template>
                     </div>
                 </div>
 
@@ -78,7 +80,7 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Url Amigable</th>
-                                    <th>Accioness</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -86,16 +88,16 @@
                                     <td v-text="item.name"></td>
                                     <td v-text="item.slug"></td>
                                     <td>
-                                        <template>
-
+                                        <template v-if="listRolPermisosByUsuario.includes('rol.ver')">
                                             <button class="btn btn-flat btn-primary btn-sm" @click.prevent="abrirModalByOption('rol', 'ver', item)">
                                                 <i class="fas fa-folder"></i> Ver
                                             </button>
-                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'rol.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
                                         </template>
-
-
-
+                                        <template v-if="listRolPermisosByUsuario.includes('rol.editar')">
+                                            <router-link class="btn btn-flat btn-info btn-sm" :to="{name:'rol.editar', params:{id: item.id}}">
+                                                <i class="fas fa-pencil-alt"></i> Editar
+                                            </router-link>
+                                        </template>
                                     </td>
                                 </tr>
                             </tbody>
@@ -231,6 +233,7 @@ import axios from 'axios';
                 listRoles: [], //Resultado de la busqueda de los usuarios
                 listPermisos: [],
                 fullscreenLoading:false,
+                listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('listRolPermisosByUsuario')),
                 pageNumber: 0, //Número de la página paginada
                 perPage: 5, //Número de registros a mostrar por paginación
                 modalShow: false,
@@ -308,6 +311,13 @@ import axios from 'axios';
                     this.listRoles =response.data
                     this.fullscreenLoading = false;
 
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
             nextPage() {
@@ -334,6 +344,13 @@ import axios from 'axios';
                     this.listPermisos = response.data;
                     this.modalShow      =   true;
                     this.modalOption    =   2;
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
             abrirModalByOption(modulo, accion, data){

@@ -216,6 +216,13 @@ export default {
             axios.post(url, this.form, config).then(response =>{
                 var nIdFile = response.data[0].nIdFile;
                 this.setGuardarUsuario(nIdFile);
+            }).catch(error => {
+                if (error.response.status == 401) {
+                    this.$router.push({name: 'login'})
+                    location.reload();
+                    sessionStorage.clear();
+                    this.fullscreenLoading = false;
+                }
             })
         },
         setGuardarUsuario(nIdFile){
@@ -230,6 +237,13 @@ export default {
                 'oFotografia'   :   nIdFile
             }).then(response => {
                 this.setEditarRolByUsuario(response.data);
+            }).catch(error => {
+                if (error.response.status == 401) {
+                    this.$router.push({name: 'login'})
+                    location.reload();
+                    sessionStorage.clear();
+                    this.fullscreenLoading = false;
+                }
             })
         },
 
@@ -241,7 +255,13 @@ export default {
                     'nIdRol'        :   this.fillCrearUsuario.nIdRol
                 }).then(response => {
                     this.fullscreenLoading = false;
-                    this.$router.push('/usuario');
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
 
@@ -284,9 +304,9 @@ export default {
                 this.mensajeError.push("La Contraseña es un campo obligatorio")
             }
 
-if (!this.fillCrearUsuario.nIdRol) {
-        this.mensajeError.push("Debe seleccionar el Rol, es un campo obligatorio")
-    }
+            if (!this.fillCrearUsuario.nIdRol) {
+                    this.mensajeError.push("Debe seleccionar el Rol, es un campo obligatorio")
+            }
 
             if (this.mensajeError.length) {
                 this.error = 1;

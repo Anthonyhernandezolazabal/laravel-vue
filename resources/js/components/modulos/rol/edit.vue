@@ -146,6 +146,8 @@
               },
               listPermisos: [],
               listPermisosFilter: [],
+              listRolPermisosByUsuario: [],
+              listRolPermisosByUsuarioFilter: [],
               modalShow: false,
               fullscreenLoading: false,
               mostrarModal: {
@@ -164,14 +166,14 @@
             this.getListarPermisosByRol();
       },
       methods: {
-
-        limpiarCriteriosBsq(){
-            this.fillEditarRol.cNombre= "";
-            this.fillEditarRol.cSlug= "";
-        },
-
-
-        getListarRoles(){
+            limpiarCriteriosBsq(){
+                this.fillEditarRol.cNombre= "";
+                this.fillEditarRol.cSlug= "";
+            },
+            abrirModal(){
+                this.modalShow = !this.modalShow;
+            },
+            getListarRoles(){
                 this.fullscreenLoading = true;
                 var url = "/administracion/rol/getListarRoles"
                 axios.get(url,{
@@ -183,9 +185,15 @@
                     this.fillEditarRol.cSlug   =   response.data[0].slug;
                     this.fullscreenLoading = false;
 
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
-
             getListarPermisosByRol(){
                     var ruta = '/administracion/rol/getListarPermisosByRol'
                     axios.get(ruta, {
@@ -197,10 +205,16 @@
                         console.log("response ::",response)
                         this.listPermisos = response.data;
                         this.filterPermisosByRol();
+                    }).catch(error => {
+                        if (error.response.status == 401) {
+                            this.$router.push({name: 'login'})
+                            location.reload();
+                            sessionStorage.clear();
+                            this.fullscreenLoading = false;
+                        }
                     })
             },
-
-        filterPermisosByRol() {
+            filterPermisosByRol() {
                 let me = this;
                 me.listPermisos.map(function(x, y){
                     me.listPermisosFilter.push({
@@ -211,15 +225,9 @@
                     })
                 })
             },
-
-
             marcarFila(index){
                 this.listPermisosFilter[index].checked  =   !this.listPermisosFilter[index].checked;
             },
-
-
-
-
             setEditarRolPermisos(){
                 if (this.validarEditarRolPermisos()) {
                     this.modalShow = true;
@@ -234,7 +242,40 @@
                     'cSlug'                 :   this.fillEditarRol.cSlug,
                     'listPermisosFilter'    :   this.listPermisosFilter
                 }).then(response => {
-                    this.fullscreenLoading = false;
+                    this.getListarRolPermisosByUsuario();
+
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
+                })
+            },
+            getListarRolPermisosByUsuario(){
+                var ruta = '/administracion/usuario/getListarRolPermisosByUsuario'
+                axios.get(ruta).then( response => {
+                    this.listRolPermisosByUsuario = response.data;
+                    this.filterListarRolPermisosByUsuario();
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
+                })
+            },
+            filterListarRolPermisosByUsuario() {
+                let me = this;
+                me.listRolPermisosByUsuarioFilter = []
+                me.listRolPermisosByUsuario.map(function(x, y){
+                    me.listRolPermisosByUsuarioFilter.push(x.slug)
+                })
+                sessionStorage.setItem('listRolPermisosByUsuario', JSON.stringify(me.listRolPermisosByUsuarioFilter));
+                EventBus.$emit('notifyRolPermisosByUsuario', me.listRolPermisosByUsuarioFilter);
+                this.fullscreenLoading = false;
                     Swal.fire({
                         position: 'top-center',
                         icon: 'success',
@@ -242,41 +283,34 @@
                         showConfirmButton: false,
                         timer: 1500
                     })
-                })
             },
+            validarEditarRolPermisos(){
+                this.error = 0;
+                this.mensajeError = [];
 
+                if (!this.fillEditarRol.cNombre) {
+                    this.mensajeError.push("El Primer Nombre es un campo obligatorio")
+                }
+                if (!this.fillEditarRol.cSlug) {
+                    this.mensajeError.push("La Url amigable es un campo obligatorio")
+                }
 
-
-          abrirModal(){
-              this.modalShow = !this.modalShow;
-          },
-          validarEditarRolPermisos(){
-              this.error = 0;
-              this.mensajeError = [];
-
-              if (!this.fillEditarRol.cNombre) {
-                  this.mensajeError.push("El Primer Nombre es un campo obligatorio")
-              }
-              if (!this.fillEditarRol.cSlug) {
-                  this.mensajeError.push("La Url amigable es un campo obligatorio")
-              }
-
-                let contador = 0;
-                this.listPermisosFilter.map(function(x, y){
-                    if (x.checked == true) {
-                        contador++;
+                    let contador = 0;
+                    this.listPermisosFilter.map(function(x, y){
+                        if (x.checked == true) {
+                            contador++;
+                        }
+                    })
+                    if (contador == 0) {
+                        this.mensajeError.push("Debe seleccionar al menos un permiso");
                     }
-                })
-                if (contador == 0) {
-                    this.mensajeError.push("Debe seleccionar al menos un permiso");
-                }
 
-                if (this.mensajeError.length) {
-                    this.error = 1;
-                }
+                    if (this.mensajeError.length) {
+                        this.error = 1;
+                    }
 
-              return this.error;
-          }
+                return this.error;
+            }
 
       },
 

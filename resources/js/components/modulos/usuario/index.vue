@@ -21,9 +21,11 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-tools"><!-- Lado izquierdo -->
-                        <router-link :to="'/usuario/crear'" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus-square"></i> Nuevo Usuario
-                        </router-link>
+                        <template v-if="listRolPermisosByUsuario.includes('usuario.crear')">
+                            <router-link class="btn btn-info btn-sm" :to="{name: 'usuario.crear'}">
+                                <i class="fas fa-plus-square"></i> Nuevo Usuario
+                            </router-link>
+                        </template>
                     </div>
                 </div>
 
@@ -140,16 +142,34 @@
                                         </template>
                                     </td>
                                     <td>
-                                        <template v-if="item.state == 'A'">
-                                            <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="{name:'usuario.ver', params:{id: item.id}}"><i class="fas fa-folder"></i> Ver</router-link>
-                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'usuario.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
-                                            <router-link class="btn btn-flat btn-success btn-sm" type="button" :to="{name:'usuario.permiso', params:{id: item.id}}"><i class="fas fa-key"></i> Permisos</router-link>
-                                            <button class="btn btn-flat btn-danger btn-sm"  type="button" :to="'/'" @click.prevent="setCambiarEstadoUsuario(1, item.id)"><i class="fas fa-trash"></i> Desactivar</button>
+                                        <template v-if="listRolPermisosByUsuario.includes('usuario.ver')">
+                                            <router-link class="btn btn-flat btn-primary btn-sm" :to="{name:'usuario.ver', params:{id: item.id}}">
+                                                <i class="fas fa-folder"></i> Ver
+                                            </router-link>
                                         </template>
-
+                                        <template v-if="item.state == 'A'">
+                                            <template v-if="listRolPermisosByUsuario.includes('usuario.editar')">
+                                                <router-link class="btn btn-flat btn-info btn-sm" :to="{name:'usuario.editar', params:{id: item.id}}">
+                                                    <i class="fas fa-pencil-alt"></i> Editar
+                                                </router-link>
+                                            </template>
+                                            <template v-if="listRolPermisosByUsuario.includes('usuario.permiso')">
+                                                <router-link class="btn btn-flat btn-success btn-sm" :to="{name:'usuario.permiso', params:{id: item.id}}">
+                                                    <i class="fas fa-key"></i> Permiso
+                                                </router-link>
+                                            </template>
+                                            <template v-if="listRolPermisosByUsuario.includes('usuario.desactivar')">
+                                                <button class="btn btn-flat btn-danger btn-sm" @click.prevent="setCambiarEstadoUsuario(1, item.id)">
+                                                    <i class="fas fa-trash"></i> Desactivar
+                                                </button>
+                                            </template>
+                                        </template>
                                         <template v-else>
-                                            <router-link class="btn btn-flat btn-primary btn-sm" type="button" :to="{name:'usuario.ver', params:{id: item.id}}"><i class="fas fa-folder"></i> Ver</router-link>
-                                            <button class="btn btn-flat btn-success btn-sm" type="button" @click.prevent="setCambiarEstadoUsuario(2, item.id)"><i class="fas fa-check"></i> Activar</button>
+                                            <template v-if="listRolPermisosByUsuario.includes('usuario.activar')">
+                                                <button class="btn btn-flat btn-danger btn-sm" @click.prevent="setCambiarEstadoUsuario(2, item.id)">
+                                                    <i class="fas fa-check"></i> Activar
+                                                </button>
+                                            </template>
                                         </template>
 
                                     </td>
@@ -205,6 +225,7 @@ import axios from 'axios';
                     {value: "A", label: "Activo"},
                     {value: "I", label: "Inactivo"}
                 ],
+                listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('listRolPermisosByUsuario')),
                 fullscreenLoading:false,
                 pageNumber: 0, //Número de la página paginada
                 perPage: 5, //Número de registros a mostrar por paginación
@@ -263,7 +284,13 @@ import axios from 'axios';
                     this.inicializarPaginacion();
                     this.listUsuarios =response.data
                     this.fullscreenLoading = false;
-
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
             nextPage() {
@@ -302,7 +329,13 @@ import axios from 'axios';
                                 timer: 1500
                             })
                             this.getListaUsuarios();
-
+                        }).catch(error => {
+                            if (error.response.status == 401) {
+                                this.$router.push({name: 'login'})
+                                location.reload();
+                                sessionStorage.clear();
+                                this.fullscreenLoading = false;
+                            }
                         })
                     }
                 })

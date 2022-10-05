@@ -190,6 +190,13 @@ export default {
                 this.fillEditarUsuario.cUsuario         =   response.data[0].username;
                 this.fillEditarUsuario.cCorreo          =   response.data[0].email;
                 this.fullscreenLoading = false;
+            }).catch(error => {
+                if (error.response.status == 401) {
+                    this.$router.push({name: 'login'})
+                    location.reload();
+                    sessionStorage.clear();
+                    this.fullscreenLoading = false;
+                }
             })
         },
         limpiarCriteriosBsq(){
@@ -224,6 +231,13 @@ export default {
             axios.post(url, this.form, config).then(response =>{
                 var nIdFile = response.data[0].nIdFile;
                 this.setGuardarUsuario(nIdFile);
+            }).catch(error => {
+                if (error.response.status == 401) {
+                    this.$router.push({name: 'login'})
+                    location.reload();
+                    sessionStorage.clear();
+                    this.fullscreenLoading = false;
+                }
             })
         },
 
@@ -241,6 +255,13 @@ export default {
             }).then(response => {
                 // console.log(response.data);
                 this.setEditarRolByUsuario();
+            }).catch(error => {
+                if (error.response.status == 401) {
+                    this.$router.push({name: 'login'})
+                    location.reload();
+                    sessionStorage.clear();
+                    this.fullscreenLoading = false;
+                }
             })
         },
 
@@ -257,6 +278,13 @@ export default {
                         showConfirmButton: false,
                         timer: 1500
                     })
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
 
@@ -271,6 +299,13 @@ export default {
                 axios.get(url).then(response => {
                     this.listRoles   =   response.data;
                     this.getRolByUsuario();
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
         },
         getRolByUsuario(){
@@ -280,10 +315,16 @@ export default {
                     'nIdUsuario'    :   this.fillEditarUsuario.nIdUsuario
                 }
             }).then(response => {
-                console.log("response ::::::",response)
                 this.fillEditarUsuario.nIdRol   =   (response.data.length == 0) ? '' : response.data[0].nIdRol;
                 this.fullscreenLoading = false;
-            })
+            }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
+                })
         },
 
         validarRegistrarUsuario(){

@@ -27,17 +27,17 @@
 
 
                                 <template v-if="!fillVerUsuario.cRutaArchivo">
-                                    <img class="profile-user-img img-fluid img-circle img-max-heigth" src="/img/avatar.png" alt="User profile picture">
+                                    <img class="profile-user-img img-fluid img-circle img-max-height" src="/img/avatar.png" alt="User profile picture">
                                 </template>
                                 <template v-else>
-                                    <img :src="fillVerUsuario.cRutaArchivo" :alt="cNombreCompleto" class=" img-max-heigth profile-avatar-img img-fluid img-circle">
+                                    <img :src="fillVerUsuario.cRutaArchivo" :alt="cNombreCompleto" class="profile-user-img img-fluid img-circle img-max-height">
                                 </template>
 
 
                             </div>
 
                             <h3 class="profile-username text-center">{{ cNombreCompleto }}</h3>
-                            <p class="text-muted text-center">Vendedor</p>
+                            <p class="text-muted text-center">{{ fillVerUsuario.cNombreRol }}</p>
 
                         </div>
                         <!-- /.card-body -->
@@ -194,7 +194,7 @@
                     oFotografia: '',
                 },
                 fillVerUsuario: {
-                    nIdUsuario: this.$attrs.id,
+                    nIdUsuario: this.$route.params.id,
                     cPrimerNombre: '',
                     cSegundoNombre: '',
                     cApellido: '',
@@ -202,7 +202,8 @@
                     cCorreo: '',
                     cContrasena: '',
                     oFotografia: '',
-                    cRutaArchivo: ''
+                    cRutaArchivo: '',
+                    cNombreRol: ''
                 },
                 modalShow: false,
                 form : new FormData,
@@ -220,6 +221,7 @@
         },
         mounted() {
             this.getUsuarioById();
+            this.getRolByUsuario();
         },
         computed:{
             cNombreCompleto(){
@@ -239,6 +241,13 @@
                     this.getUsuarioEditar(response.data[0])
                     this.getUsuarioEditarVer(response.data[0])
                     this.fullscreenLoading = false;
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
             getUsuarioEditar(data){
@@ -255,6 +264,25 @@
                     this.fillVerUsuario.cUsuario         =   data.username;
                     this.fillVerUsuario.cCorreo          =   data.email;
                     this.fillVerUsuario.cRutaArchivo        =   data.profile_image;
+            },
+
+            getRolByUsuario(){
+                var url = '/administracion/usuario/getRolByUsuario'
+                axios.get(url,{
+                    params: {
+                        'nIdUsuario'    :   this.fillEditarUsuario.nIdUsuario
+                    }
+                }).then(response => {
+                    this.fillVerUsuario.cNombreRol   =   (response.data.length == 0) ? '' : response.data[0].name;
+                    this.fullscreenLoading = false;
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
+                })
             },
             getFile(e){
                 this.fillEditarUsuario.oFotografia = e.target.files[0];
@@ -279,6 +307,13 @@
                 axios.post(url, this.form, config).then(response =>{
                     var nIdFile = response.data[0].nIdFile;
                     this.setGuardarUsuario(nIdFile);
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
             setGuardarUsuario(nIdFile){
@@ -293,15 +328,28 @@
                     'cContrasena'   :   this.fillEditarUsuario.cContrasena,
                     'oFotografia'   :   nIdFile
                 }).then(response => {
+                    this.getRefrescarUsuarioAutenticado();
+                })
+            },
+            getRefrescarUsuarioAutenticado() {
+                var url = '/authenticate/getRefrescarUsuarioAutenticado'
+                axios.get(url).then(response => {
+                    EventBus.$emit('verifyAuthenticatedUser', response.data);
                     this.fullscreenLoading = false;
-                    this.getUsuarioById()
+                    this.getUsuarioById();
                     Swal.fire({
-                        position: 'top-center',
                         icon: 'success',
-                        title: 'Se actualizó el usuario correctamente',
+                        title: 'Se actualizo el usuario correctamente',
                         showConfirmButton: false,
                         timer: 1500
                     })
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
             abrirModal(){

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Administracion;
 
-use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Exception;
 
 class UserController extends Controller
 {
@@ -93,7 +94,7 @@ class UserController extends Controller
         $cUsuario       =   ($cUsuario   ==  NULL) ? ($cUsuario   =   '') :   $cUsuario;
         $cCorreo        =   ($cCorreo   ==  NULL) ? ($cCorreo   =   '') :   $cCorreo;
         $cContrasena    =   ($cContrasena   ==  NULL) ? ($cContrasena   =   '') :   $cContrasena;
-        $oFotografia    =   ($oFotografia   ==  NULL) ? ($oFotografia   =   NULL) :   $oFotografia;
+        // $oFotografia    =   ($oFotografia   ==  0) ? ($oFotografia   =   NULL) :   $oFotografia;
 
 
 
@@ -108,6 +109,7 @@ class UserController extends Controller
                                                                     $cContrasena,
                                                                     $oFotografia
                                                                 ]);
+
     }
 
     public function setCambiarEstadoUsuario(Request $request)
@@ -230,5 +232,24 @@ class UserController extends Controller
             // capturara algun error ocurrido en el "try"
             DB::rollBack();
         }
+    }
+
+    public function getListarRolPermisosByUsuario(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+
+        $nIdUsuario  =   $request->nIdUsuario;
+        if (!$nIdUsuario) {
+            $nIdUsuario =   Auth::id();
+        }
+
+        $nIdUsuario =   ($nIdUsuario   ==  NULL) ? ($nIdUsuario   =   0) :   $nIdUsuario;
+
+        $rpta   =   DB::select('call sp_Usuario_getListarRolPermisosByUsuario (?)',
+                                                [
+                                                    $nIdUsuario
+                                                ]);
+
+        return $rpta;
     }
 }

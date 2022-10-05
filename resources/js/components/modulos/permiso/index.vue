@@ -15,9 +15,11 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-tools"><!-- Lado izquierdo -->
-                        <router-link :to="'/permiso/crear'" class="btn btn-info btn-sm">
-                            <i class="fas fa-plus-square"></i> Nuevo Permiso
-                        </router-link>
+                        <template v-if="listRolPermisosByUsuario.includes('permiso.crear')">
+                            <router-link class="btn btn-info btn-sm" :to="{name: 'permiso.crear'}">
+                                <i class="fas fa-plus-square"></i> Nuevo Permiso
+                            </router-link>
+                        </template>
                     </div>
                 </div>
 
@@ -78,7 +80,7 @@
                                 <tr>
                                     <th>Nombre</th>
                                     <th>Url Amigable</th>
-                                    <th>Accioness</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -86,13 +88,11 @@
                                     <td v-text="item.name"></td>
                                     <td v-text="item.slug"></td>
                                     <td>
-                                        <template>
-
-                                            <router-link class="btn btn-flat btn-info btn-sm"    type="button" :to="{name:'permiso.editar', params:{id: item.id}}"><i class="fas fa-pencil-alt"></i> Editar</router-link>
+                                        <template v-if="listRolPermisosByUsuario.includes('permiso.editar')">
+                                            <router-link class="btn btn-flat btn-info btn-sm" :to="{name:'permiso.editar', params:{id: item.id}}">
+                                                <i class="fas fa-pencil-alt"></i> Editar
+                                            </router-link>
                                         </template>
-
-
-
                                     </td>
                                 </tr>
                             </tbody>
@@ -142,6 +142,7 @@ import axios from 'axios';
                     cSlug: "",
                 },
                 listPermisos: [],
+                listRolPermisosByUsuario: JSON.parse(sessionStorage.getItem('listRolPermisosByUsuario')),
                 fullscreenLoading:false,
                 pageNumber: 0, //Número de la página paginada
                 perPage: 5
@@ -199,6 +200,13 @@ import axios from 'axios';
                     this.listPermisos =response.data
                     this.fullscreenLoading = false;
 
+                }).catch(error => {
+                    if (error.response.status == 401) {
+                        this.$router.push({name: 'login'})
+                        location.reload();
+                        sessionStorage.clear();
+                        this.fullscreenLoading = false;
+                    }
                 })
             },
             nextPage() {
