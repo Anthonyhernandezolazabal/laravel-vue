@@ -275,10 +275,10 @@ import axios from 'axios';
                 var url = "/administracion/usuarios/getListaUsuarios"
                 axios.get(url,{
                     params: {
-                        "cNombre"   :   this.fillBsqUsuario.cNombre,
-                        "cUsuario"   :   this.fillBsqUsuario.cUsuario,
-                        "cCorreo"   :   this.fillBsqUsuario.cCorreo,
-                        "cEstado"   :   this.fillBsqUsuario.cEstado,
+                        "cNombre"       :   this.fillBsqUsuario.cNombre,
+                        "cUsuario"      :   this.fillBsqUsuario.cUsuario,
+                        "cCorreo"       :   this.fillBsqUsuario.cCorreo,
+                        "cEstado"       :   this.fillBsqUsuario.cEstado,
                     }
                 }).then(response => {
                     this.inicializarPaginacion();
