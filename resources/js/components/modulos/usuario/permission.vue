@@ -124,7 +124,7 @@
         data(){
             return {
                 fillPermiso: {
-                    nIdUsuario: this.$attrs.id,
+                    nIdUsuario: this.$route.params.id,
                     cNombreRol: ''
                 },
                 listPermisosByRolAsignado: [],

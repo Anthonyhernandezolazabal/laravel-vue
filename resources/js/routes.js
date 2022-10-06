@@ -32,7 +32,15 @@ export const rutas =
     {
         path: "/login",
         name: "login",
-        component: require("./components/modulos/authenticate/login").default
+        component: require("./components/modulos/authenticate/login").default,
+        beforeEnter: (to, from, next) => {
+            let authUser = JSON.parse(sessionStorage.getItem('authUser'));
+            if (authUser) {
+                next({ name: 'dashboard.index' });
+            } else {
+                next();
+            }
+        }
     },
 
 
@@ -75,6 +83,23 @@ export const rutas =
         }
     },
 
+    {
+        path: "/categoria/crear",
+        name: 'categoria.crear',
+        component: require("./components/modulos/categoria/create").default,
+        beforeEnter: (to, from, next) => {
+            verificarAcceso(to, from, next)
+        }
+    },
+
+    {
+        path: "/categoria/editar",
+        name: 'categoria.editar',
+        component: require("./components/modulos/categoria/edit").default,
+        beforeEnter: (to, from, next) => {
+            verificarAcceso(to, from, next)
+        }
+    },
 
     {
         path: "/cliente",
@@ -120,6 +145,42 @@ export const rutas =
         path: "/producto",
         name: "producto.index",
         component: require("./components/modulos/producto/index").default,
+        beforeEnter: (to, from, next) => {
+            verificarAcceso(to, from, next)
+        }
+    },
+
+    {
+        path: "/producto/crear",
+        name: 'producto.crear',
+        component: require("./components/modulos/producto/create").default,
+        beforeEnter: (to, from, next) => {
+            verificarAcceso(to, from, next)
+        }
+    },
+    {
+        path: "/producto/editar/:id",
+        name: "producto.editar",
+        component: require("./components/modulos/producto/edit").default,
+        props:true,
+        beforeEnter: (to, from, next) => {
+            verificarAcceso(to, from, next)
+        }
+    },
+    {
+        path: "/producto/catalago/:id",
+        name: "producto.catalago",
+        component: require("./components/modulos/producto/catalago").default,
+        props:true,
+        beforeEnter: (to, from, next) => {
+            verificarAcceso(to, from, next)
+        }
+    },
+    {
+        path: "/producto/catalago/nuevo-catalogo/:id",
+        name: "producto.nuevocatalogo",
+        component: require("./components/modulos/producto/createCatalogo").default,
+        props:true,
         beforeEnter: (to, from, next) => {
             verificarAcceso(to, from, next)
         }
